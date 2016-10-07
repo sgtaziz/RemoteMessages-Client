@@ -1,7 +1,7 @@
 # RemoteMessages-Client
 
 ## Screenshots
-![Screenshot 1](http://i.imgur.com/1ZG6LST.png)
+![Screenshot 1](http://i.imgur.com/NoEQsrM.png)
 ![Screenshot 2](http://i.imgur.com/ctMdGE6.png)
 
 ## Building
