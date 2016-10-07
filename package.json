@@ -23,6 +23,7 @@
     "spectron": "^3.4.0"
   },
   "dependencies": {
+    "electron-gh-releases": "^2.0.4",
     "electron-settings": "^2.2.1"
   },
   "repository": {
