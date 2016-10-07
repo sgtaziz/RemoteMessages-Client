@@ -3,28 +3,32 @@
   "productName": "Remote Messages",
   "description": "iOS text client",
   "homepage": "https://www.horizonservers.net",
-  "author": {
-    "name": "Aziz",
-    "email": "sgtaziz013@gmail.com"
-  },
-  "email": "sgtaziz013@gmail.com",
+  "author": "sgtaziz",
   "version": "1.0.0",
   "main": "main.js",
   "build": {
     "appId": "RemoteMessages",
     "squirrelWindows": {
-      "iconUrl": "http://server2.horizonservers.net/app.ico"
+      "remoteReleases": true
     },
     "linux": {
       "target": "AppImage"
     }
   },
   "devDependencies": {
+    "electron": "^1.4.3",
     "electron-builder": "^7.10.2",
-    "grunt-electron-installer": "^2.1.0"
+    "electron-prebuilt": "^1.4.3",
+    "spectron": "^3.4.0"
   },
   "dependencies": {
-    "electron-gh-releases": "^2.0.4",
     "electron-settings": "^2.2.1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/sgtaziz/RemoteMessages-Client.git"
+  },
+  "scripts": {
+    "test": "mocha scripts/run-test.js"
   }
 }

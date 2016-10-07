@@ -1,6 +1,15 @@
 const {app, Tray, Menu, BrowserWindow, ipcMain} = require('electron')
 const path = require('path')
+const GhReleases = require('electron-gh-releases')
 const iconPath = path.join(__dirname, 'icon.png')
+
+
+let options = {
+  repo: 'sgtaziz/RemoteMessages-Client',
+  currentVersion: app.getVersion()
+}
+
+const updater = new GhReleases(options)
 
 let appIcon
 
@@ -11,7 +20,16 @@ let win
 var forceQuit = false
 
 function createWindow () {
-	// Create the browser window.
+	//Perform update
+	updater.check((err, status) => {
+		if (!err && status) {
+			updater.download()
+		}
+	})
+	updater.on('update-downloaded', (info) => {
+		updater.install()
+	})
+
 	win = new BrowserWindow({width: 800, height: 600, icon:`${__dirname}/icon.png`})
 	win.setMenu(null)
 
