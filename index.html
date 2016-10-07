@@ -26,6 +26,18 @@
 		body, html {
 			overflow: hidden;
 		}
+		#loading {
+			position: fixed;
+			width: 100px;
+			height: 100px;
+			left: 50%;
+			top: 50%;
+			margin-left: -100px;
+			margin-top: -50px;
+			background: url('loading.gif') no-repeat center center;
+			background-size: contain;
+
+		}
 	</style>
 	</head>
 	<body>
@@ -39,6 +51,14 @@
 				<input class="mdl-textfield__input" type="text" pattern="-?[0-9]*(\.[0-9]+)?" id="portNum">
 				<label class="mdl-textfield__label" for="portNum">Port Number</label>
 				<span class="mdl-textfield__error">Input is not a number!</span>
+			</div>
+			<div class="mdl-textfield mdl-js-textfield mdl-textfield--floating-label" id="field3">
+				<input class="mdl-textfield__input" type="text" id="username">
+				<label class="mdl-textfield__label" for="username">Username</label>
+			</div>
+			<div class="mdl-textfield mdl-js-textfield mdl-textfield--floating-label" id="field4">
+				<input class="mdl-textfield__input" type="password" id="password">
+				<label class="mdl-textfield__label" for="password">Password</label>
 			</div>
 			<br />
 			<button class="mdl-button mdl-js-button mdl-button--raised mdl-button--accent" id="connect">
@@ -62,6 +82,18 @@
 				document.getElementById("field2").className += " is-dirty";
 			});
 
+			settings.get('urlRemoteMessages.username').then(val => {
+				if (!val) return;
+				document.getElementById("username").value = val;
+				document.getElementById("field3").className += " is-dirty";
+			});
+
+			settings.get('urlRemoteMessages.password').then(val => {
+				if (!val) return;
+				document.getElementById("password").value = val;
+				document.getElementById("field4").className += " is-dirty";
+			});
+
 			var button = document.getElementById("connect");
 
 			button.onclick = function() {
@@ -70,16 +102,21 @@
 
 				var ipAddress = document.getElementById("ipAddr").value;
 				var portNum = document.getElementById("portNum").value;
+				var username = document.getElementById("username").value;
+				var password = document.getElementById("password").value;
 
 				settings.set("urlRemoteMessages", {
 					ip: ipAddress,
-					port: portNum
+					port: portNum,
+					username: username,
+					password: password
 				});
 
-				var url = "http://" + ipAddress + ":" + portNum;
+				var url = "http://" + username + ":" + password + "@" + ipAddress + ":" + portNum;
 
 				var req = http.request({method: 'HEAD', host: ipAddress, port: portNum, path: '/'}, function(r) {
-					document.body.innerHTML = '<webview id="webview" src="'+url+'/" disablewebsecurity nodeintegration></webview>';
+					document.body.innerHTML = '<webview id="webview" src="'+url+'/" disablewebsecurity nodeintegration></webview><div id="loading"></div>';
+					document.getElementById("loading").style.visibility = "";
 					const webview = document.getElementById('webview');
 
 	    			webview.addEventListener('did-stop-loading', function() {
@@ -92,6 +129,10 @@
 								oldWindowFocus();
 							}
 						`);
+						document.getElementById("loading").remove();
+					});
+
+	    			webview.addEventListener('did-start-loading', function() {
 					});
 
 					webview.addEventListener('ipc-message', (event) => {
