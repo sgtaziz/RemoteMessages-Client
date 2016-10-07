@@ -2,9 +2,9 @@
   "name": "RemoteMessages",
   "productName": "Remote Messages",
   "description": "iOS text client",
-  "homepage": "https://www.horizonservers.net",
+  "homepage": "https://github.com/sgtaziz/RemoteMessages-Client",
   "author": "sgtaziz",
-  "version": "1.0.2",
+  "version": "1.0.3",
   "main": "main.js",
   "build": {
     "appId": "RemoteMessages",
@@ -21,7 +21,8 @@
   },
   "dependencies": {
     "electron-gh-releases": "^2.0.4",
-    "electron-settings": "^2.2.1"
+    "electron-settings": "^2.2.1",
+    "request": "^2.75.0"
   },
   "repository": {
     "type": "git",

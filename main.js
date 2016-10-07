@@ -19,16 +19,18 @@ let win
 
 var forceQuit = false
 
+updater.on('update-downloaded', (info) => {
+	updater.install()
+})
+
+updater.check((err, status) => {
+	if (!err && status) {
+		updater.download()
+	}
+})
+
 function createWindow () {
 	//Perform update
-	updater.check((err, status) => {
-		if (!err && status) {
-			updater.download()
-		}
-	})
-	updater.on('update-downloaded', (info) => {
-		updater.install()
-	})
 
 	win = new BrowserWindow({width: 800, height: 600, icon:`${__dirname}/icon.png`})
 	win.setMenu(null)
@@ -59,6 +61,10 @@ function createWindow () {
 		win.show()
 		win.focus()
 	})
+
+	ipcMain.on('reload', (e, msg) => {
+		win.reload()
+	})
 	// and load the index.html of the app.
 	win.loadURL(`file://${__dirname}/index.html`)
 
@@ -68,6 +74,12 @@ function createWindow () {
 
 	// Emitted when the window is closed.
 	win.on('close', (event) => {
+		updater.check((err, status) => {
+			if (!err && status) {
+				updater.download()
+			}
+		})
+
 		if(!forceQuit && (process.platform !== 'linux' || !win.isMinimized() )) {
 			event.preventDefault()
 			if (process.platform === 'linux') win.minimize()

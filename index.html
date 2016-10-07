@@ -19,7 +19,7 @@
 		webview {
 			width: 100%;
 			height: 100%;
-			position: absolute;
+			position: fixed;
 			top: 0;
 			left: 0;
 		}
@@ -70,29 +70,33 @@
 			const settings = require('electron-settings');
 			const http = require('http');
 
-			settings.get('urlRemoteMessages.ip').then(val => {
-				if (!val) return;
-				document.getElementById("ipAddr").value = val;
-				document.getElementById("field1").className += " is-dirty";
-			});
+			function loadSettings() {
+				settings.get('urlRemoteMessages.ip').then(val => {
+					if (!val) return;
+					document.getElementById("ipAddr").value = val;
+					document.getElementById("field1").className += " is-dirty";
+				});
 
-			settings.get('urlRemoteMessages.port').then(val => {
-				if (!val) return;
-				document.getElementById("portNum").value = val;
-				document.getElementById("field2").className += " is-dirty";
-			});
+				settings.get('urlRemoteMessages.port').then(val => {
+					if (!val) return;
+					document.getElementById("portNum").value = val;
+					document.getElementById("field2").className += " is-dirty";
+				});
 
-			settings.get('urlRemoteMessages.username').then(val => {
-				if (!val) return;
-				document.getElementById("username").value = val;
-				document.getElementById("field3").className += " is-dirty";
-			});
+				settings.get('urlRemoteMessages.username').then(val => {
+					if (!val) return;
+					document.getElementById("username").value = val;
+					document.getElementById("field3").className += " is-dirty";
+				});
 
-			settings.get('urlRemoteMessages.password').then(val => {
-				if (!val) return;
-				document.getElementById("password").value = val;
-				document.getElementById("field4").className += " is-dirty";
-			});
+				settings.get('urlRemoteMessages.password').then(val => {
+					if (!val) return;
+					document.getElementById("password").value = val;
+					document.getElementById("field4").className += " is-dirty";
+				});
+			}
+
+			loadSettings();
 
 			var button = document.getElementById("connect");
 
@@ -113,10 +117,11 @@
 				});
 
 				var url = "http://" + username + ":" + password + "@" + ipAddress + ":" + portNum;
+				var auth = "Basic " + new Buffer(username + ":" + password).toString("base64");
 
-				var req = http.request({method: 'HEAD', host: ipAddress, port: portNum, path: '/'}, function(r) {
-					document.body.innerHTML = '<webview id="webview" src="'+url+'/" disablewebsecurity nodeintegration></webview><div id="loading"></div>';
-					document.getElementById("loading").style.visibility = "";
+				var req = http.request({method: 'GET', host: ipAddress, port: portNum, path: '/', headers: {'Authorization': auth}}, function(r) {
+					console.log(r);
+					document.body.innerHTML += '<webview id="webview" src="'+url+'/" disablewebsecurity nodeintegration></webview><div id="loading"></div>';
 					const webview = document.getElementById('webview');
 
 	    			webview.addEventListener('did-stop-loading', function() {
@@ -133,6 +138,14 @@
 					});
 
 	    			webview.addEventListener('did-start-loading', function() {
+						document.getElementById('info').style.display = 'none';
+					});
+
+					webview.addEventListener('did-get-response-details', function(status, newURL, originalURL, httpResponseCode, requestMethod, referrer, headers, resourceType) {
+						if (status.httpResponseCode == 401) {
+							alert('Incorrect username/password.');
+							ipcRenderer.send('reload', '');
+						}
 					});
 
 					webview.addEventListener('ipc-message', (event) => {
@@ -143,19 +156,18 @@
 				});
 
 				req.on('error', function(err) {
-					alert('Unable to connect to the Remote Messages server. Make sure you have the correct IP and port.');
-					document.getElementById('connect').disabled = false;
-					document.getElementById('connect').innerHTML = 'Connect';
+					alert('Unable to connect to the Remote Messages server. Make sure your IP and Port matches the ones in your Remote Messages settings on your iDevice.');
+					ipcRenderer.send('reload', '');
 				});
 
 				req.on('socket', function (socket) {
-					socket.setTimeout(10000);
+					socket.setTimeout(7000);
 					socket.on('timeout', function() {
 				        req.abort();
 				    });
 				});
 
-				req.setTimeout(10000);
+				req.setTimeout(7000);
 				req.end();
 			}
 
