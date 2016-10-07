@@ -4,7 +4,7 @@
   "description": "iOS text client",
   "homepage": "https://www.horizonservers.net",
   "author": "sgtaziz",
-  "version": "1.0.1",
+  "version": "1.0.2",
   "main": "main.js",
   "build": {
     "appId": "RemoteMessages",
