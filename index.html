@@ -46,16 +46,17 @@
 			</button>
 		</div>
 		<script>
-			const {ipcRenderer} = require('electron')
+			const {ipcRenderer} = require('electron');
 			const settings = require('electron-settings');
+			const http = require('http');
 
-			settings.get('url.ip').then(val => {
+			settings.get('urlRemoteMessages.ip').then(val => {
 				if (!val) return;
 				document.getElementById("ipAddr").value = val;
 				document.getElementById("field1").className += " is-dirty";
 			});
 
-			settings.get('url.port').then(val => {
+			settings.get('urlRemoteMessages.port').then(val => {
 				if (!val) return;
 				document.getElementById("portNum").value = val;
 				document.getElementById("field2").className += " is-dirty";
@@ -64,37 +65,57 @@
 			var button = document.getElementById("connect");
 
 			button.onclick = function() {
-				this.disabled=true;
+				this.disabled = true;
+				this.innerHTML = 'Connecting...';
+
 				var ipAddress = document.getElementById("ipAddr").value;
 				var portNum = document.getElementById("portNum").value;
 
-				settings.set("url", {
+				settings.set("urlRemoteMessages", {
 					ip: ipAddress,
 					port: portNum
 				});
 
 				var url = "http://" + ipAddress + ":" + portNum;
-				document.body.innerHTML = '<webview id="webview" src="'+url+'/" disablewebsecurity nodeintegration></webview>';
 
-				const webview = document.getElementById('webview');
+				var req = http.request({method: 'HEAD', host: ipAddress, port: portNum, path: '/'}, function(r) {
+					document.body.innerHTML = '<webview id="webview" src="'+url+'/" disablewebsecurity nodeintegration></webview>';
+					const webview = document.getElementById('webview');
 
-    			webview.addEventListener('did-stop-loading', function() {
-					webview.executeJavaScript(`
-						var oldWindowFocus = window.focus;
-						const {ipcRenderer} = require('electron');
+	    			webview.addEventListener('did-stop-loading', function() {
+						webview.executeJavaScript(`
+							var oldWindowFocus = window.focus;
+							const {ipcRenderer} = require('electron');
 
-						window.focus = function () {
-							ipcRenderer.sendToHost('focus');
-							oldWindowFocus();
+							window.focus = function () {
+								ipcRenderer.sendToHost('focus');
+								oldWindowFocus();
+							}
+						`);
+					});
+
+					webview.addEventListener('ipc-message', (event) => {
+						if (event.channel == 'focus') {
+							ipcRenderer.send('window-focus', '');
 						}
-					`);
+					});
 				});
 
-				webview.addEventListener('ipc-message', (event) => {
-					if (event.channel == 'focus') {
-						ipcRenderer.send('window-focus', '');
-					}
+				req.on('error', function(err) {
+					alert('Unable to connect to the Remote Messages server. Make sure you have the correct IP and port.');
+					document.getElementById('connect').disabled = false;
+					document.getElementById('connect').innerHTML = 'Connect';
 				});
+
+				req.on('socket', function (socket) {
+					socket.setTimeout(10000);
+					socket.on('timeout', function() {
+				        req.abort();
+				    });
+				});
+
+				req.setTimeout(10000);
+				req.end();
 			}
 
 		</script>

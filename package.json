@@ -4,13 +4,10 @@
   "description": "iOS text client",
   "homepage": "https://www.horizonservers.net",
   "author": "sgtaziz",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "main": "main.js",
   "build": {
     "appId": "RemoteMessages",
-    "squirrelWindows": {
-      "remoteReleases": true
-    },
     "linux": {
       "target": "AppImage"
     }
