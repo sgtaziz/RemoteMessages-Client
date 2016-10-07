@@ -2,26 +2,23 @@ var Application = require('spectron').Application
 var electron = require('electron-prebuilt')
 var assert = require('assert')
 
-describe('application launch', function () {
-  this.timeout(10000)
+var app = new Application({
+  path: electron,
+  args: ['/Users/aziz/Desktop/RemoteMessages/RemoteMessages-Client']
+})
 
-  beforeEach(function () {
-    this.app = new Application({
-      path: electron,
-	  args: ['/Users/aziz/Desktop/RemoteMessages/RemoteMessages-Client']
-    })
-    return this.app.start()
-  })
-
-  afterEach(function () {
-    if (this.app && this.app.isRunning()) {
-      return this.app.stop()
-    }
-  })
-
-  it('shows an initial window', function () {
-    return this.app.client.getWindowCount().then(function (count) {
-      assert.equal(count, 1)
-    })
-  })
+app.start().then(function () {
+  // Check if the window is visible
+  return app.browserWindow.isVisible()
+}).then(function (isVisible) {
+  // Verify the window is visible
+  assert.equal(isVisible, true)
+}).then(function () {
+  // Stop the application
+  return app.stop()
+}).catch(function (error) {
+  // Log any failures
+  console.error('Test failed', error.message)
+  app.stop();
+  process.exit(1);
 })
