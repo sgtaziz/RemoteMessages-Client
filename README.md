@@ -1,4 +1,4 @@
-# RemoteMessages-Client
+# RemoteMessages-Client [![Build Status](https://travis-ci.org/sgtaziz/RemoteMessages-Client.svg?branch=master)](https://travis-ci.org/sgtaziz/RemoteMessages-Client)
 
 ## Screenshots
 ![Screenshot 1](http://i.imgur.com/NoEQsrM.png)
