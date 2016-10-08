@@ -4,7 +4,7 @@
   "description": "iOS text client",
   "homepage": "https://github.com/sgtaziz/RemoteMessages-Client",
   "author": "sgtaziz",
-  "version": "1.0.3",
+  "version": "1.0.4",
   "main": "main.js",
   "build": {
     "appId": "RemoteMessages",
@@ -14,7 +14,7 @@
   },
   "devDependencies": {
     "electron": "^1.4.3",
-    "electron-builder": "^7.10.2",
+    "electron-builder": "^7.11.4",
     "electron-prebuilt": "^1.4.3",
     "mocha": "^3.1.0",
     "spectron": "^3.4.0"
@@ -22,7 +22,8 @@
   "dependencies": {
     "electron-gh-releases": "^2.0.4",
     "electron-settings": "^2.2.1",
-    "request": "^2.75.0"
+    "windows-shortcuts": "^0.1.4",
+    "windows-shortcuts-appid": "^0.3.2"
   },
   "repository": {
     "type": "git",

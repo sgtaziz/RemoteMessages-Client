@@ -2,11 +2,12 @@ const {app, Tray, Menu, BrowserWindow, ipcMain} = require('electron')
 const path = require('path')
 const GhReleases = require('electron-gh-releases')
 const iconPath = path.join(__dirname, 'icon.png')
-
+const ws = require('windows-shortcuts-appid')
+const fs = require('fs')
 
 let options = {
-  repo: 'sgtaziz/RemoteMessages-Client',
-  currentVersion: app.getVersion()
+	repo: 'sgtaziz/RemoteMessages-Client',
+	currentVersion: app.getVersion()
 }
 
 const updater = new GhReleases(options)
@@ -65,7 +66,7 @@ function createWindow () {
 	ipcMain.on('reload', (e, msg) => {
 		win.reload()
 	})
-	// and load the index.html of the app.
+
 	win.loadURL(`file://${__dirname}/index.html`)
 
 	app.on('before-quit', function() {
@@ -94,6 +95,24 @@ function createWindow () {
 		// when you should delete the corresponding element.
 		win = null
 	})
+
+	if (process.platform === 'win32') {
+		var appId = "com.sgtaziz.RemoteMessages.RemoteMessages"
+		app.setAppUserModelId(appId)
+		var shortcutPath = process.env.APPDATA + "\\Microsoft\\Windows\\Start Menu\\Programs\\" + app.getName() + ".lnk"
+
+		fs.exists(shortcutPath, function(exists) {
+			if (exists || process.execPath.includes('electron.exe')) return
+
+			ws.create(shortcutPath, process.execPath, function(err) {
+				if (err) throw err
+
+				ws.addAppId(shortcutPath, appId, function(err) {
+					if(err) throw err
+				})
+			})
+		})
+	}
 }
 
 // This method will be called when Electron has finished

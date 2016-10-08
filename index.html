@@ -117,58 +117,43 @@
 				});
 
 				var url = "http://" + username + ":" + password + "@" + ipAddress + ":" + portNum;
-				var auth = "Basic " + new Buffer(username + ":" + password).toString("base64");
 
-				var req = http.request({method: 'GET', host: ipAddress, port: portNum, path: '/', headers: {'Authorization': auth}}, function(r) {
-					console.log(r);
-					document.body.innerHTML += '<webview id="webview" src="'+url+'/" disablewebsecurity nodeintegration></webview><div id="loading"></div>';
-					const webview = document.getElementById('webview');
+				document.body.innerHTML = '<webview id="webview" src="'+url+'/" disablewebsecurity nodeintegration></webview><div id="loading"></div>';
 
-	    			webview.addEventListener('did-stop-loading', function() {
-						webview.executeJavaScript(`
-							var oldWindowFocus = window.focus;
-							const {ipcRenderer} = require('electron');
+				const webview = document.getElementById('webview');
 
-							window.focus = function () {
-								ipcRenderer.sendToHost('focus');
-								oldWindowFocus();
-							}
-						`);
-						document.getElementById("loading").remove();
-					});
+				webview.addEventListener('did-stop-loading', function() {
+					webview.executeJavaScript(`
+						var oldWindowFocus = window.focus;
+						const {ipcRenderer} = require('electron');
 
-	    			webview.addEventListener('did-start-loading', function() {
-						document.getElementById('info').style.display = 'none';
-					});
-
-					webview.addEventListener('did-get-response-details', function(status, newURL, originalURL, httpResponseCode, requestMethod, referrer, headers, resourceType) {
-						if (status.httpResponseCode == 401) {
-							alert('Incorrect username/password.');
-							ipcRenderer.send('reload', '');
+						window.focus = function () {
+							ipcRenderer.sendToHost('focus');
+							oldWindowFocus();
 						}
-					});
-
-					webview.addEventListener('ipc-message', (event) => {
-						if (event.channel == 'focus') {
-							ipcRenderer.send('window-focus', '');
-						}
-					});
+					`);
+					document.getElementById("loading").remove();
 				});
 
-				req.on('error', function(err) {
+				webview.addEventListener('did-start-loading', function() {});
+
+				webview.addEventListener('did-get-response-details', function(status, newURL, originalURL, httpResponseCode, requestMethod, referrer, headers, resourceType) {
+					if (status.httpResponseCode == 401) {
+						alert('Incorrect username/password.');
+						ipcRenderer.send('reload', '');
+					}
+				});
+
+				webview.addEventListener('ipc-message', (event) => {
+					if (event.channel == 'focus') {
+						ipcRenderer.send('window-focus', '');
+					}
+				});
+
+				webview.addEventListener('did-fail-load', (errorCode, errorDescription, validatedURL, isMainFrame) => {
 					alert('Unable to connect to the Remote Messages server. Make sure your IP and Port matches the ones in your Remote Messages settings on your iDevice.');
 					ipcRenderer.send('reload', '');
 				});
-
-				req.on('socket', function (socket) {
-					socket.setTimeout(7000);
-					socket.on('timeout', function() {
-				        req.abort();
-				    });
-				});
-
-				req.setTimeout(7000);
-				req.end();
 			}
 
 		</script>
