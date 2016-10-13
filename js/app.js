@@ -61,8 +61,6 @@ button.onclick = function() {
 			alert('Given URL is not a Remote Messages server.');
 			ipcRenderer.send('reload', '');
 		}
-
-		webview.openDevTools();
 	});
 
 	webview.addEventListener('did-start-loading', function() {
