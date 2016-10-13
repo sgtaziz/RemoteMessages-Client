@@ -59,7 +59,7 @@ button.onclick = function() {
 
 		if (webview.getTitle().indexOf("Remote Messages") < 0) {
 			alert('Given URL is not a Remote Messages server.');
-			ipcRenderer.send('reload', '');
+			disconnect();
 		}
 	});
 
@@ -70,7 +70,7 @@ button.onclick = function() {
 	webview.addEventListener('did-get-response-details', function(status, newURL, originalURL, httpResponseCode, requestMethod, referrer, headers, resourceType) {
 		if (status.httpResponseCode == 401) {
 			alert('Incorrect username/password.');
-			ipcRenderer.send('reload', '');
+			disconnect();
 		}
 	});
 
@@ -82,7 +82,7 @@ button.onclick = function() {
 
 	webview.addEventListener('did-fail-load', (errorCode, errorDescription, validatedURL, isMainFrame) => {
 		alert('Unable to connect to the Remote Messages server. Make sure your IP and Port matches the ones in your Remote Messages settings on your iDevice.');
-		ipcRenderer.send('reload', '');
+		disconnect();
 	});
 }
 
