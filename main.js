@@ -1,14 +1,20 @@
 const {app, Tray, Menu, BrowserWindow, ipcMain} = require('electron')
 const path = require('path')
 const GhReleases = require('electron-gh-releases')
-const iconPath = path.join(__dirname, 'icon.png')
+const AutoLaunch = require('auto-launch');
+const iconPath = path.join(__dirname, 'img/icon.png')
 const ws = require('windows-shortcuts-appid')
 const fs = require('fs')
+require('electron-context-menu')();
 
 let options = {
 	repo: 'sgtaziz/RemoteMessages-Client',
 	currentVersion: app.getVersion()
 }
+
+var autoLauncher = new AutoLaunch({
+    name: 'Remote Messages'
+});
 
 const updater = new GhReleases(options)
 
@@ -33,7 +39,7 @@ updater.check((err, status) => {
 function createWindow () {
 	//Perform update
 
-	win = new BrowserWindow({width: 800, height: 600, icon:`${__dirname}/icon.png`})
+	win = new BrowserWindow({width: 1000, height: 600, icon:`${__dirname}/img/icon.png`})
 	win.setMenu(null)
 
 	if (process.platform !== 'darwin') {
@@ -67,7 +73,21 @@ function createWindow () {
 		win.reload()
 	})
 
+	ipcMain.on('quit', (e, msg) => {
+		forceQuit = true
+		app.quit()
+	})
+
+	ipcMain.on('startup', (e, msg) => {
+		if (msg == 1) {
+			autoLauncher.enable();
+		} else {
+			autoLauncher.disable();
+		}
+	})
+
 	win.loadURL(`file://${__dirname}/index.html`)
+	win.openDevTools()
 
 	app.on('before-quit', function() {
 		if (process.platform !== 'win32') forceQuit = true
@@ -114,6 +134,11 @@ function createWindow () {
 		})
 	}
 }
+
+app.on('certificate-error', (event, webContents, url, error, certificate, callback) => {
+	event.preventDefault()
+	callback(true)
+})
 
 // This method will be called when Electron has finished
 // initialization and is ready to create browser windows.
