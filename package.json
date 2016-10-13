@@ -23,7 +23,9 @@
     "auto-launch": "^5.0.1",
     "electron-context-menu": "^0.6.0",
     "electron-gh-releases": "^2.0.4",
-    "electron-settings": "^2.2.1",
+    "electron-settings": "^2.2.1"
+  },
+  "optionalDependencies": {
     "windows-shortcuts": "^0.1.4",
     "windows-shortcuts-appid": "^0.3.2"
   },

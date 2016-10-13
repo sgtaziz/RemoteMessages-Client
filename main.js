@@ -3,7 +3,6 @@ const path = require('path')
 const GhReleases = require('electron-gh-releases')
 const AutoLaunch = require('auto-launch');
 const iconPath = path.join(__dirname, 'img/icon.png')
-const ws = require('windows-shortcuts-appid')
 const fs = require('fs')
 require('electron-context-menu')();
 
@@ -117,9 +116,11 @@ function createWindow () {
 	})
 
 	if (process.platform === 'win32') {
+		var ws = require('windows-shortcuts-appid')
 		var appId = "com.sgtaziz.RemoteMessages.RemoteMessages"
-		app.setAppUserModelId(appId)
 		var shortcutPath = process.env.APPDATA + "\\Microsoft\\Windows\\Start Menu\\Programs\\" + app.getName() + ".lnk"
+
+		app.setAppUserModelId(appId)
 
 		fs.exists(shortcutPath, function(exists) {
 			if (exists || process.execPath.includes('electron.exe')) return
