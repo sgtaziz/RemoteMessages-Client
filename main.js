@@ -97,7 +97,6 @@ function createWindow () {
 	})
 
 	win.loadURL(`file://${__dirname}/index.html`)
-	win.openDevTools()
 
 	app.on('before-quit', function() {
 		if (process.platform !== 'win32') forceQuit = true
