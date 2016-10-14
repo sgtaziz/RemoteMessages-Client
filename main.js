@@ -26,8 +26,6 @@ let win
 var forceQuit = false
 
 updater.on('update-downloaded', (info) => {
-	updater.install()
-
 	if (process.platform === 'win32') {
 		var ws = require('windows-shortcuts-appid')
 		var shortcutPath = process.env.APPDATA + "\\Microsoft\\Windows\\Start Menu\\Programs\\" + app.getName() + ".lnk"
@@ -37,6 +35,8 @@ updater.on('update-downloaded', (info) => {
 		}
 	}
 
+	forceQuit = true
+	updater.install()
 	app.quit()
 })
 
