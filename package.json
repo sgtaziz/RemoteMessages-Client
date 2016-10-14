@@ -4,7 +4,7 @@
   "description": "Remote Messages",
   "homepage": "https://github.com/sgtaziz/RemoteMessages-Client",
   "author": "sgtaziz",
-  "version": "1.1.0",
+  "version": "1.1.5",
   "main": "main.js",
   "build": {
     "appId": "com.sgtaziz.RemoteMessages.RemoteMessages",
@@ -22,11 +22,8 @@
     "auto-launch": "^5.0.1",
     "electron-context-menu": "^0.6.0",
     "electron-gh-releases": "^2.0.4",
-    "electron-settings": "^2.2.1"
-  },
-  "optionalDependencies": {
-    "windows-shortcuts": "^0.1.4",
-    "windows-shortcuts-appid": "^0.3.2"
+    "electron-settings": "^2.2.1",
+    "electron-squirrel-startup": "^1.0.0"
   },
   "repository": {
     "type": "git",

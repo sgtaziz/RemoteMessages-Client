@@ -1,3 +1,5 @@
+if (require('electron-squirrel-startup')) return;
+
 const {app, Tray, Menu, BrowserWindow, ipcMain} = require('electron')
 const path = require('path')
 const GhReleases = require('electron-gh-releases')
@@ -26,18 +28,7 @@ let win
 var forceQuit = false
 
 updater.on('update-downloaded', (info) => {
-	if (process.platform === 'win32') {
-		var ws = require('windows-shortcuts-appid')
-		var shortcutPath = process.env.APPDATA + "\\Microsoft\\Windows\\Start Menu\\Programs\\" + app.getName() + ".lnk"
-
-		if (fs.existsSync(shortcutPath)) {
-			fs.unlinkSync(shortcutPath)
-		}
-	}
-
-	forceQuit = true
 	updater.install()
-	app.quit()
 })
 
 updater.check((err, status) => {
@@ -121,26 +112,6 @@ function createWindow () {
 	win.on('closed', () => {
 		win = null
 	})
-
-	if (process.platform === 'win32') {
-		var ws = require('windows-shortcuts-appid')
-		var appId = "com.sgtaziz.RemoteMessages.RemoteMessages"
-		var shortcutPath = process.env.APPDATA + "\\Microsoft\\Windows\\Start Menu\\Programs\\" + app.getName() + ".lnk"
-
-		app.setAppUserModelId(appId)
-
-		fs.exists(shortcutPath, function(exists) {
-			if (exists || process.execPath.includes('electron.exe')) return
-
-			ws.create(shortcutPath, process.execPath, function(err) {
-				if (err) throw err
-
-				ws.addAppId(shortcutPath, appId, function(err) {
-					if(err) throw err
-				})
-			})
-		})
-	}
 }
 
 app.on('certificate-error', (event, webContents, url, error, certificate, callback) => {
