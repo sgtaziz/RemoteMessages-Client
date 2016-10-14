@@ -9,6 +9,7 @@
 npm install
 ./node_modules/.bin/build
 ```
+
 Or if you want to run it without building:
 ```
 npm install
