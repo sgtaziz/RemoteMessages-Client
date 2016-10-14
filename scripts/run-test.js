@@ -21,7 +21,7 @@ describe('application launch', function () {
 
   it('shows an initial window', function () {
     return this.app.client.getWindowCount().then(function (count) {
-      assert.equal(count, 1)
+      assert.equal(count, 3)
     })
   })
 })
