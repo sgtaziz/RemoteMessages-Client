@@ -4,7 +4,7 @@
   "description": "Remote Messages",
   "homepage": "https://github.com/sgtaziz/RemoteMessages-Client",
   "author": "sgtaziz",
-  "version": "1.1.5",
+  "version": "1.1.6",
   "main": "main.js",
   "build": {
     "appId": "com.sgtaziz.RemoteMessages.RemoteMessages",

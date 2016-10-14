@@ -19,19 +19,19 @@ dialog.querySelector('.close').addEventListener('click', function() {
 	dialog.close();
 });
 
-var button = document.getElementById("connect");
+var button = document.getElementById('connect');
 
 button.onclick = function() {
 	this.disabled = true;
 	this.innerHTML = 'Connecting...';
 
-	var ipAddress = document.getElementById("ipAddr").value;
-	var portNum = document.getElementById("portNum").value;
-	var username = document.getElementById("username").value;
-	var password = document.getElementById("password").value;
-	var useSSL = document.getElementById("useSSL").checked;
+	var ipAddress = document.getElementById('ipAddr').value;
+	var portNum = document.getElementById('portNum').value;
+	var username = document.getElementById('username').value;
+	var password = document.getElementById('password').value;
+	var useSSL = document.getElementById('useSSL').checked;
 
-	settings.set("urlRemoteMessages", {
+	settings.set('urlRemoteMessages', {
 		ip: ipAddress,
 		port: portNum,
 		username: username,
@@ -39,13 +39,13 @@ button.onclick = function() {
 		SSL: useSSL
 	});
 
-	var protocol = "http";
+	var protocol = 'http';
 
 	if (useSSL) {
-		protocol = "https";
+		protocol = 'https';
 	}
 
-	var url = protocol + "://" + username + ":" + password + "@" + ipAddress + ":" + portNum;
+	var url = protocol + '://' + username + ':' + password + '@' + ipAddress + ':' + portNum;
 
 	insertHTML('<div id="loading"></div>');
 	insertHTML('<webview id="webview" src="'+url+'/" disablewebsecurity nodeintegration preload="./js/webview.js"></webview><div id="loading"></div>');
@@ -54,17 +54,21 @@ button.onclick = function() {
 
 	webview.addEventListener('did-stop-loading', function() {
 		require('electron-context-menu')({window: webview});
-		document.getElementById("overlay").style.display = 'block';
-		document.getElementById("loading").remove();
+		document.getElementById('overlay').style.display = 'block';
+		document.getElementById('loading').remove();
 
-		if (webview.getTitle().indexOf("Remote Messages") < 0) {
+		if (process.defaultApp) {
+			window.openDevTools({mode: 'detach'})
+		}
+
+		if (webview.getTitle().indexOf('Remote Messages') < 0) {
 			alert('Given URL is not a Remote Messages server.');
 			disconnect();
 		}
 	});
 
 	webview.addEventListener('did-start-loading', function() {
-		document.getElementById("info").remove();
+		document.getElementById('info').remove();
 	});
 
 	webview.addEventListener('did-get-response-details', function(status, newURL, originalURL, httpResponseCode, requestMethod, referrer, headers, resourceType) {
@@ -89,56 +93,56 @@ button.onclick = function() {
 function insertHTML(html) {
 	var tmpdiv = document.createElement('div');
 	tmpdiv.innerHTML = html;
-	document.getElementById("window").appendChild(tmpdiv.firstChild);
+	document.getElementById('window').appendChild(tmpdiv.firstChild);
 }
 
 function loadSettings() {
 	settings.get('urlRemoteMessages.ip').then(val => {
 		if (!val) return;
-		document.getElementById("ipAddr").value = val;
-		document.getElementById("field1").className += " is-dirty";
+		document.getElementById('ipAddr').value = val;
+		document.getElementById('field1').className += ' is-dirty';
 	});
 
 	settings.get('urlRemoteMessages.port').then(val => {
 		if (!val) return;
-		document.getElementById("portNum").value = val;
-		document.getElementById("field2").className += " is-dirty";
+		document.getElementById('portNum').value = val;
+		document.getElementById('field2').className += ' is-dirty';
 	});
 
 	settings.get('urlRemoteMessages.username').then(val => {
 		if (!val) return;
-		document.getElementById("username").value = val;
-		document.getElementById("field3").className += " is-dirty";
+		document.getElementById('username').value = val;
+		document.getElementById('field3').className += ' is-dirty';
 	});
 
 	settings.get('urlRemoteMessages.password').then(val => {
 		if (!val) return;
-		document.getElementById("password").value = val;
-		document.getElementById("field4").className += " is-dirty";
+		document.getElementById('password').value = val;
+		document.getElementById('field4').className += ' is-dirty';
 	});
 
 	settings.get('urlRemoteMessages.SSL').then(val => {
 		if (!val) return;
-		document.getElementById("useSSL").checked = val;
-		document.getElementById("field5").className += " is-checked";
+		document.getElementById('useSSL').checked = val;
+		document.getElementById('field5').className += ' is-checked';
 	});
 
 	settings.get('RMStartup').then(val => {
 		if (!val) return;
-		document.getElementById("startup").checked = val;
-		document.getElementById("startupfield").className += " is-checked";
+		document.getElementById('startup').checked = val;
+		document.getElementById('startupfield').className += ' is-checked';
 	});
 
 	settings.get('RMAutoconnect').then(val => {
 		if (!val) return;
-		document.getElementById("autoconnect").checked = val;
-		document.getElementById("autoconnectfield").className += " is-checked";
+		document.getElementById('autoconnect').checked = val;
+		document.getElementById('autoconnectfield').className += ' is-checked';
 	});
 
 	settings.get('RMDisconnected').then(val => {
 		if (!val) {
-			if (document.getElementById("autoconnect").checked) {
-				document.getElementById("connect").click();
+			if (document.getElementById('autoconnect').checked) {
+				document.getElementById('connect').click();
 			}
 		} else {
 			settings.set('RMDisconnected', false);
@@ -151,7 +155,7 @@ function quit() {
 }
 
 function disconnect() {
-	settings.set("RMDisconnected", true);
+	settings.set('RMDisconnected', true);
 	ipcRenderer.send('reload', '');
 }
 
@@ -160,7 +164,7 @@ function openRMSettings() {
 }
 
 function checkStartup(checkbox) {
-	settings.set("RMStartup", checkbox.checked);
+	settings.set('RMStartup', checkbox.checked);
 
 	if (checkbox.checked) {
 		ipcRenderer.send('startup', '1');
@@ -170,5 +174,5 @@ function checkStartup(checkbox) {
 }
 
 function checkAutoconnect(checkbox) {
-	settings.set("RMAutoconnect", checkbox.checked);
+	settings.set('RMAutoconnect', checkbox.checked);
 }
