@@ -1,5 +1,5 @@
 var Application = require('spectron').Application
-var electron = require('electron-prebuilt')
+var electron = require('electron')
 var assert = require('assert')
 
 describe('application launch', function () {
