@@ -30,6 +30,8 @@
     "url": "https://github.com/sgtaziz/RemoteMessages-Client.git"
   },
   "scripts": {
-    "test": "mocha scripts/run-test.js"
+    "test": "mocha scripts/run-test.js",
+	"publish": "build -mwl --publish always",
+	"build": "build -mwl"
   }
 }
